@@ -169,6 +169,42 @@ final class WP_Abilities_Registry {
 	}
 
 	/**
+	 * Retrieves abilities filtered by category.
+	 *
+	 * Do not use this method directly. Instead, use the `wp_get_abilities_by_category()` function.
+	 *
+	 * @since 0.3.0
+	 *
+	 * @see wp_get_abilities_by_category()
+	 *
+	 * @param string|string[] $categories The category slug(s) to filter by. Can be a single string or an array of strings.
+	 * @return \WP_Ability[] The array of abilities in the specified category or categories.
+	 */
+	public function get_abilities_by_category( $categories ): array {
+		// Normalize to array.
+		if ( is_string( $categories ) ) {
+			$categories = array( $categories );
+		}
+
+		if ( ! is_array( $categories ) ) {
+			return array();
+		}
+
+		$filtered = array();
+		foreach ( $this->registered_abilities as $ability ) {
+			$ability_categories = $ability->get_categories();
+			// Check if ability has any of the requested categories.
+			foreach ( $categories as $category ) {
+				if ( in_array( $category, $ability_categories, true ) ) {
+					$filtered[ $ability->get_name() ] = $ability;
+					break; // Found a match, no need to check other categories for this ability.
+				}
+			}
+		}
+		return $filtered;
+	}
+
+	/**
 	 * Checks if an ability is registered.
 	 *
 	 * @since 0.1.0

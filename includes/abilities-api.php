@@ -98,3 +98,160 @@ function wp_get_ability( string $name ): ?WP_Ability {
 function wp_get_abilities(): array {
 	return WP_Abilities_Registry::get_instance()->get_all_registered();
 }
+
+/**
+ * Retrieves abilities filtered by category.
+ *
+ * @since 0.3.0
+ *
+ * @see WP_Abilities_Registry::get_abilities_by_category()
+ *
+ * @param string|string[] $categories The category slug(s) to filter by. Can be a single string or an array of strings.
+ * @return \WP_Ability[] The array of abilities in the specified category or categories.
+ */
+function wp_get_abilities_by_category( $categories ): array {
+	return WP_Abilities_Registry::get_instance()->get_abilities_by_category( $categories );
+}
+
+/**
+ * Retrieves the default ability categories.
+ *
+ * @since 0.3.0
+ *
+ * @return array[] Array of default ability categories.
+ *
+ * @phpstan-return array<int, array{slug: string, label: string, description: string}>
+ */
+function get_default_ability_categories(): array {
+	return array(
+		array(
+			'slug'        => 'content',
+			'label'       => __( 'Content', 'abilities-api' ),
+			'description' => __( 'Abilities related to content management', 'abilities-api' ),
+		),
+		array(
+			'slug'        => 'system',
+			'label'       => __( 'System', 'abilities-api' ),
+			'description' => __( 'System and configuration abilities', 'abilities-api' ),
+		),
+		array(
+			'slug'        => 'user',
+			'label'       => __( 'User', 'abilities-api' ),
+			'description' => __( 'User management abilities', 'abilities-api' ),
+		),
+	);
+}
+
+/**
+ * Retrieves all available ability categories.
+ *
+ * This function returns the default categories and allows them to be modified
+ * via the 'ability_categories_all' filter.
+ *
+ * @since 0.3.0
+ *
+ * @return array[] Array of ability categories.
+ *
+ * @phpstan-return array<int, array{slug: string, label: string, description: string}>
+ */
+function get_ability_categories(): array {
+	$categories = get_default_ability_categories();
+
+	/**
+	 * Filters the available ability categories.
+	 *
+	 * Allows plugins and themes to add, remove, or modify ability categories.
+	 *
+	 * @since 0.3.0
+	 *
+	 * @param array[] $categories Array of ability categories. Each category should have
+	 *                            'slug', 'label', and 'description' keys.
+	 */
+	$categories = apply_filters( 'ability_categories_all', $categories );
+
+	// Validate that the filter returned an array.
+	if ( ! is_array( $categories ) ) {
+		_doing_it_wrong(
+			'ability_categories_all',
+			__( 'The ability_categories_all filter must return an array.', 'abilities-api' ),
+			'0.3.0'
+		);
+		return get_default_ability_categories();
+	}
+
+	// Validate each category has the required structure.
+	$valid_categories = array();
+	foreach ( $categories as $index => $category ) {
+		if ( ! is_array( $category ) ) {
+			_doing_it_wrong(
+				'ability_categories_all',
+				sprintf(
+					/* translators: %d: Category index. */
+					__( 'Invalid category at index %d. Each category must be an array.', 'abilities-api' ),
+					$index
+				),
+				'0.3.0'
+			);
+			continue;
+		}
+
+		if ( ! isset( $category['slug'] ) || ! is_string( $category['slug'] ) ) {
+			_doing_it_wrong(
+				'ability_categories_all',
+				sprintf(
+					/* translators: %d: Category index. */
+					__( 'Invalid category at index %d. Each category must have a "slug" property that is a string.', 'abilities-api' ),
+					$index
+				),
+				'0.3.0'
+			);
+			continue;
+		}
+
+		// Validate slug format matches the pattern required by WP_Ability.
+		if ( ! preg_match( '/^[a-z0-9]+(-[a-z0-9]+)*$/', $category['slug'] ) ) {
+			_doing_it_wrong(
+				'ability_categories_all',
+				sprintf(
+					/* translators: %s: Category slug. */
+					__( 'Invalid category slug "%s". Category slugs must contain only lowercase alphanumeric characters and dashes.', 'abilities-api' ),
+					$category['slug']
+				),
+				'0.3.0'
+			);
+			continue;
+		}
+
+		// Validate label is present and is a string.
+		if ( ! isset( $category['label'] ) || ! is_string( $category['label'] ) ) {
+			_doing_it_wrong(
+				'ability_categories_all',
+				sprintf(
+					/* translators: %s: Category slug. */
+					__( 'Invalid category "%s". Each category must have a "label" property that is a string.', 'abilities-api' ),
+					$category['slug']
+				),
+				'0.3.0'
+			);
+			continue;
+		}
+
+		// Validate description is present and is a string.
+		if ( ! isset( $category['description'] ) || ! is_string( $category['description'] ) ) {
+			_doing_it_wrong(
+				'ability_categories_all',
+				sprintf(
+					/* translators: %s: Category slug. */
+					__( 'Invalid category "%s". Each category must have a "description" property that is a string.', 'abilities-api' ),
+					$category['slug']
+				),
+				'0.3.0'
+			);
+			continue;
+		}
+
+		$valid_categories[] = $category;
+	}
+
+	return $valid_categories;
+}
