@@ -88,7 +88,7 @@ class WP_Ability {
 	/**
 	 * The ability categories.
 	 *
-	 * @since 0.4.0
+	 * @since 0.3.0
 	 * @var array<string>
 	 */
 	protected $categories = array();
@@ -307,7 +307,7 @@ class WP_Ability {
 	/**
 	 * Retrieves the categories for the ability.
 	 *
-	 * @since 0.4.0
+	 * @since 0.3.0
 	 *
 	 * @return array<string> The categories for the ability.
 	 */

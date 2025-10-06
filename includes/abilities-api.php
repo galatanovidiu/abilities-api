@@ -102,7 +102,7 @@ function wp_get_abilities(): array {
 /**
  * Retrieves abilities filtered by category.
  *
- * @since 0.4.0
+ * @since 0.3.0
  *
  * @see WP_Abilities_Registry::get_abilities_by_category()
  *
@@ -116,7 +116,7 @@ function wp_get_abilities_by_category( $categories ): array {
 /**
  * Retrieves the default ability categories.
  *
- * @since 0.4.0
+ * @since 0.3.0
  *
  * @return array[] Array of default ability categories.
  *
@@ -148,7 +148,7 @@ function get_default_ability_categories(): array {
  * This function returns the default categories and allows them to be modified
  * via the 'ability_categories_all' filter.
  *
- * @since 0.4.0
+ * @since 0.3.0
  *
  * @return array[] Array of ability categories.
  *
@@ -162,7 +162,7 @@ function get_ability_categories(): array {
 	 *
 	 * Allows plugins and themes to add, remove, or modify ability categories.
 	 *
-	 * @since 0.4.0
+	 * @since 0.3.0
 	 *
 	 * @param array[] $categories Array of ability categories. Each category should have
 	 *                            'slug', 'label', and 'description' keys.
@@ -174,7 +174,7 @@ function get_ability_categories(): array {
 		_doing_it_wrong(
 			'ability_categories_all',
 			__( 'The ability_categories_all filter must return an array.', 'abilities-api' ),
-			'0.4.0'
+			'0.3.0'
 		);
 		return get_default_ability_categories();
 	}
@@ -190,7 +190,7 @@ function get_ability_categories(): array {
 					__( 'Invalid category at index %d. Each category must be an array.', 'abilities-api' ),
 					$index
 				),
-				'0.4.0'
+				'0.3.0'
 			);
 			continue;
 		}
@@ -203,7 +203,7 @@ function get_ability_categories(): array {
 					__( 'Invalid category at index %d. Each category must have a "slug" property that is a string.', 'abilities-api' ),
 					$index
 				),
-				'0.4.0'
+				'0.3.0'
 			);
 			continue;
 		}
@@ -217,7 +217,7 @@ function get_ability_categories(): array {
 					__( 'Invalid category slug "%s". Category slugs must contain only lowercase alphanumeric characters and dashes.', 'abilities-api' ),
 					$category['slug']
 				),
-				'0.4.0'
+				'0.3.0'
 			);
 			continue;
 		}
@@ -231,7 +231,7 @@ function get_ability_categories(): array {
 					__( 'Invalid category "%s". Each category must have a "label" property that is a string.', 'abilities-api' ),
 					$category['slug']
 				),
-				'0.4.0'
+				'0.3.0'
 			);
 			continue;
 		}
@@ -245,7 +245,7 @@ function get_ability_categories(): array {
 					__( 'Invalid category "%s". Each category must have a "description" property that is a string.', 'abilities-api' ),
 					$category['slug']
 				),
-				'0.4.0'
+				'0.3.0'
 			);
 			continue;
 		}

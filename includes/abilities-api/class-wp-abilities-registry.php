@@ -173,7 +173,7 @@ final class WP_Abilities_Registry {
 	 *
 	 * Do not use this method directly. Instead, use the `wp_get_abilities_by_category()` function.
 	 *
-	 * @since 0.4.0
+	 * @since 0.3.0
 	 *
 	 * @see wp_get_abilities_by_category()
 	 *
